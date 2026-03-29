@@ -1,39 +1,23 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import ollama # Utilise l'IA locale gratuite
 
 app = Flask(__name__)
-CORS(app) # Autorise ton site web à parler à ce script
+CORS(app) # C'est la clé pour que GitHub puisse accéder à ton localhost
 
 @app.route('/generate', methods=['POST'])
-def generate_content():
+def generate():
     data = request.json
-    topic = data.get('topic')
+    sujet = data.get('topic')
     
-    # Prompt ultra-puissant pour forcer l'IA à être virale
-    prompt = f"""
-    Tu es un expert en croissance YouTube (style MrBeast). 
-    Sujet : {topic}
-    Donne-moi :
-    1. Trois titres 'Clickbait' mais honnêtes.
-    2. Une idée de miniature choc.
-    3. Un script court (intro de 30 sec) qui retient l'attention.
-    Réponds en Français.
-    """
-
-    try:
-        # Appel du modèle local (Llama3 ou Mistral)
-        response = ollama.chat(model='llama3', messages=[
-            {'role': 'user', 'content': prompt},
-        ])
-        
-        return jsonify({
-            "status": "success",
-            "content": response['message']['content']
-        })
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
+    # Ici, c'est normalement là que l'IA travaille.
+    # Pour le test, on renvoie une réponse fixe :
+    reponse = {
+        "titre": f"COMMENT DEVENIR RICHE AVEC {sujet.upper()}",
+        "description": "Cette vidéo va changer votre vie...",
+        "tags": f"{sujet}, IA, Argent, 2026"
+    }
+    return jsonify(reponse)
 
 if __name__ == '__main__':
-    print("🚀 Serveur RED-AI lancé sur http://127.0.0.1:5000")
-    app.run(debug=True, port=5000)
+    # Le serveur se lance sur le port 5000
+    app.run(host='0.0.0.0', port=5000)
